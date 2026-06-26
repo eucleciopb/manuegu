@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
 import { Button } from '../ui/Button';
 import { formatCurrency, formatWhatsApp } from '../../lib/utils';
-import {
-  copyToClipboard,
-  generatePixPayload,
-  getPixQrCodeUrl,
-} from '../../lib/pixPayload';
+import { generatePixPayload, getPixQrCodeUrl } from '../../lib/pixPayload';
+
+async function copyToClipboard(text: string): Promise<void> {
+  await navigator.clipboard.writeText(text);
+}
 
 interface PixPaymentBoxProps {
   amount: number;

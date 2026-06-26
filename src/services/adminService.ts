@@ -26,7 +26,7 @@ export function isAdminAuthenticated(): boolean {
 }
 
 export async function getDashboardStats(): Promise<DashboardStats> {
-  const [guests, gifts, reservations, pixPayments] = await Promise.all([
+  const [guests, gifts, , pixPayments] = await Promise.all([
     getAllGuests(),
     getAllGifts(),
     getAllReservations(),
@@ -61,7 +61,7 @@ export async function getAllConfirmations(): Promise<ConfirmationRow[]> {
     getAllPixPayments(),
   ]);
 
-  return guests.flatMap((guest) => {
+  return guests.flatMap((guest): ConfirmationRow[] => {
     const guestReservations = reservations.filter((r) => r.guest_id === guest.id);
 
     if (guestReservations.length === 0) {
