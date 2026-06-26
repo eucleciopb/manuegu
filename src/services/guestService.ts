@@ -1,5 +1,5 @@
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
-import { MOCK_GUESTS, generateId } from '../lib/mockData';
+import { MOCK_GUESTS, MOCK_GIFTS, MOCK_RESERVATIONS, MOCK_PIX_PAYMENTS, generateId } from '../lib/mockData';
 import type { Guest, GuestFormData, RsvpData } from '../types';
 
 function mapGuest(row: Guest): Guest {
@@ -92,6 +92,50 @@ export async function confirmPixContribution(guestId: string): Promise<void> {
 
   const guest = MOCK_GUESTS.find((g) => g.id === guestId);
   if (guest) guest.pix_contribution_status = 'confirmed';
+}
+
+export async function deleteGuest(guestId: string): Promise<void> {
+  if (isSupabaseConfigured && supabase) {
+    const { data: reservations, error: resError } = await supabase
+      .from('gift_reservations')
+      .select('gift_id')
+      .eq('guest_id', guestId);
+
+    if (resError) throw new Error(resError.message);
+
+    const giftIds = (reservations ?? []).map((r) => r.gift_id);
+
+    if (giftIds.length > 0) {
+      const { error: giftError } = await supabase
+        .from('gifts')
+        .update({ status: 'available' })
+        .in('id', giftIds);
+
+      if (giftError) throw new Error(giftError.message);
+    }
+
+    const { error } = await supabase.from('guests').delete().eq('id', guestId);
+    if (error) throw new Error(error.message);
+    return;
+  }
+
+  const guestIndex = MOCK_GUESTS.findIndex((g) => g.id === guestId);
+  if (guestIndex < 0) throw new Error('Convidado não encontrado.');
+
+  for (const reservation of MOCK_RESERVATIONS.filter((r) => r.guest_id === guestId)) {
+    const gift = MOCK_GIFTS.find((g) => g.id === reservation.gift_id);
+    if (gift) gift.status = 'available';
+  }
+
+  for (let i = MOCK_RESERVATIONS.length - 1; i >= 0; i--) {
+    if (MOCK_RESERVATIONS[i].guest_id === guestId) MOCK_RESERVATIONS.splice(i, 1);
+  }
+
+  for (let i = MOCK_PIX_PAYMENTS.length - 1; i >= 0; i--) {
+    if (MOCK_PIX_PAYMENTS[i].guest_id === guestId) MOCK_PIX_PAYMENTS.splice(i, 1);
+  }
+
+  MOCK_GUESTS.splice(guestIndex, 1);
 }
 
 export async function getAllGuests(): Promise<Guest[]> {

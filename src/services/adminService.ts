@@ -1,4 +1,4 @@
-import { getAllGuests, confirmPixContribution } from './guestService';
+import { getAllGuests, confirmPixContribution, deleteGuest } from './guestService';
 import {
   getAllGifts,
   getAllReservations,
@@ -51,6 +51,10 @@ export async function getDashboardStats(): Promise<DashboardStats> {
 
 export async function confirmGuestContribution(guestId: string): Promise<void> {
   await confirmPixContribution(guestId);
+}
+
+export async function removeGuest(guestId: string): Promise<void> {
+  await deleteGuest(guestId);
 }
 
 export async function getAllConfirmations(): Promise<ConfirmationRow[]> {

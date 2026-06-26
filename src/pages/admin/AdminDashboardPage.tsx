@@ -9,6 +9,7 @@ import {
   getDashboardStats,
   getAllConfirmations,
   confirmGuestContribution,
+  removeGuest,
 } from '../../services/adminService';
 import { releaseGift, confirmPixPayment, getAllGifts, createGift, updateGift, deleteGift } from '../../services/giftService';
 import type { Gift, GiftFormData } from '../../types';
@@ -38,6 +39,7 @@ export function AdminDashboardPage() {
     gift: null,
   });
   const [giftError, setGiftError] = useState('');
+  const [guestError, setGuestError] = useState('');
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -93,6 +95,26 @@ export function AdminDashboardPage() {
     try {
       await confirmPixPayment(pixId);
       await loadData();
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  async function handleDeleteGuest(row: ConfirmationRow) {
+    const guestName = `${row.guest.first_name} ${row.guest.last_name}`;
+    const message = row.gift
+      ? `Excluir ${guestName}? O presente "${row.gift.name}" voltará a ficar disponível.`
+      : `Excluir ${guestName}? Esta ação não pode ser desfeita.`;
+
+    if (!confirm(message)) return;
+
+    setActionLoading(`delete-guest-${row.guest.id}`);
+    setGuestError('');
+    try {
+      await removeGuest(row.guest.id);
+      await loadData();
+    } catch (err) {
+      setGuestError(err instanceof Error ? err.message : 'Erro ao excluir convidado');
     } finally {
       setActionLoading(null);
     }
@@ -204,35 +226,49 @@ export function AdminDashboardPage() {
           )}
 
           {tab === 'confirmations' && (
-            <AdminTable
-              headers={[
-                'Nome',
-                'WhatsApp',
-                'Pessoas',
-                'Mensagem',
-                'Presente',
-                'Entrega',
-                'PIX',
-                'Data',
-              ]}
-            >
-              {confirmations.map((c) => (
-                <tr key={c.guest.id}>
-                  <td>{c.guest.first_name} {c.guest.last_name}</td>
-                  <td>{formatWhatsApp(c.guest.whatsapp)}</td>
-                  <td>{c.guest.will_attend ? (c.guest.guest_count ?? 1) : '—'}</td>
-                  <td className="cell-message">{c.guest.message || '—'}</td>
-                  <td>{c.gift?.name || '—'}</td>
-                  <td>{deliveryMethodLabel(c.reservation?.delivery_method ?? null)}</td>
-                  <td>
-                    <span className={`badge badge-${c.pixPayment?.status || 'none'}`}>
-                      {pixStatusLabel(c.pixPayment?.status ?? null)}
-                    </span>
-                  </td>
-                  <td>{formatDate(c.guest.created_at)}</td>
-                </tr>
-              ))}
-            </AdminTable>
+            <>
+              {guestError && <p className="form-error-global">{guestError}</p>}
+              <AdminTable
+                headers={[
+                  'Nome',
+                  'WhatsApp',
+                  'Pessoas',
+                  'Mensagem',
+                  'Presente',
+                  'Entrega',
+                  'PIX',
+                  'Data',
+                  'Ações',
+                ]}
+              >
+                {confirmations.map((c) => (
+                  <tr key={c.guest.id}>
+                    <td>{c.guest.first_name} {c.guest.last_name}</td>
+                    <td>{formatWhatsApp(c.guest.whatsapp)}</td>
+                    <td>{c.guest.will_attend ? (c.guest.guest_count ?? 1) : '—'}</td>
+                    <td className="cell-message">{c.guest.message || '—'}</td>
+                    <td>{c.gift?.name || '—'}</td>
+                    <td>{deliveryMethodLabel(c.reservation?.delivery_method ?? null)}</td>
+                    <td>
+                      <span className={`badge badge-${c.pixPayment?.status || 'none'}`}>
+                        {pixStatusLabel(c.pixPayment?.status ?? null)}
+                      </span>
+                    </td>
+                    <td>{formatDate(c.guest.created_at)}</td>
+                    <td>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        loading={actionLoading === `delete-guest-${c.guest.id}`}
+                        onClick={() => handleDeleteGuest(c)}
+                      >
+                        Excluir
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </AdminTable>
+            </>
           )}
 
           {tab === 'gifts' && (
