@@ -2,9 +2,9 @@ import { useMemo, useState } from 'react';
 import { Button } from '../ui/Button';
 import { formatCurrency, formatWhatsApp } from '../../lib/utils';
 import {
+  copyToClipboard,
   generatePixPayload,
   getPixQrCodeUrl,
-  normalizePixKey,
 } from '../../lib/pixPayload';
 
 interface PixPaymentBoxProps {
