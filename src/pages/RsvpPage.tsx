@@ -1,31 +1,17 @@
-import { useState } from 'react';
 import { PageLayout } from '../components/layout/PageLayout';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { StepIndicator, OptionCard } from '../components/ui/StepIndicator';
 import { useGuestFlow } from '../context/GuestFlowContext';
-import { createGuest } from '../services/guestService';
 
 export function RsvpPage() {
-  const { formData, rsvpData, setRsvpData, setGuest, setStep } = useGuestFlow();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const { formData, rsvpData, setRsvpData, setStep } = useGuestFlow();
 
-  async function handleNext() {
-    setLoading(true);
-    setError('');
-    try {
-      const guest = await createGuest(formData, rsvpData);
-      setGuest(guest);
-      if (rsvpData.willAttend) {
-        setStep('gifts');
-      } else {
-        setStep('contribution');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao salvar confirmação');
-    } finally {
-      setLoading(false);
+  function handleNext() {
+    if (rsvpData.willAttend) {
+      setStep('gifts');
+    } else {
+      setStep('contribution');
     }
   }
 
@@ -81,13 +67,11 @@ export function RsvpPage() {
           </div>
         )}
 
-        {error && <p className="form-error-global">{error}</p>}
-
         <div className="flow-actions">
           <Button variant="outline" onClick={() => setStep('identification')}>
             Voltar
           </Button>
-          <Button loading={loading} onClick={handleNext}>
+          <Button onClick={handleNext}>
             {rsvpData.willAttend ? 'Escolher presente' : 'Continuar'}
           </Button>
         </div>

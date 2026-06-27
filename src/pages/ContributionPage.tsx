@@ -3,33 +3,19 @@ import { PageLayout } from '../components/layout/PageLayout';
 import { Button } from '../components/ui/Button';
 import { StepIndicator, OptionCard } from '../components/ui/StepIndicator';
 import { useGuestFlow } from '../context/GuestFlowContext';
-import { savePixContributionIntent } from '../services/guestService';
 
 export function ContributionPage() {
-  const { formData, guest, setGuest, setHasContributionPix, setStep } = useGuestFlow();
+  const { formData, setHasContributionPix, setStep } = useGuestFlow();
   const [wantsToContribute, setWantsToContribute] = useState<boolean | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   function handleSkip() {
+    setHasContributionPix(false);
     setStep('thankyou');
   }
 
-  async function handleConfirmContribution() {
-    if (!guest) return;
-
-    setLoading(true);
-    setError('');
-    try {
-      const updatedGuest = await savePixContributionIntent(guest.id);
-      setGuest(updatedGuest);
-      setHasContributionPix(true);
-      setStep('thankyou');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao registrar contribuição');
-    } finally {
-      setLoading(false);
-    }
+  function handleConfirmContribution() {
+    setHasContributionPix(true);
+    setStep('thankyou');
   }
 
   return (
@@ -67,13 +53,11 @@ export function ContributionPage() {
               Na próxima tela você verá a chave PIX. Contribua com o que desejar, no seu tempo.
             </p>
 
-            {error && <p className="form-error-global">{error}</p>}
-
             <div className="flow-actions">
               <Button variant="outline" onClick={() => setWantsToContribute(null)}>
                 Voltar
               </Button>
-              <Button loading={loading} onClick={handleConfirmContribution}>
+              <Button onClick={handleConfirmContribution}>
                 Continuar
               </Button>
             </div>

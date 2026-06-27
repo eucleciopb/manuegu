@@ -5,6 +5,7 @@ import type {
   GuestFormData,
   RsvpData,
   GiftCheckoutItem,
+  DeliveryMethod,
 } from '../types';
 
 export type FlowStep =
@@ -24,6 +25,7 @@ interface GuestFlowState {
   selectedGifts: Gift[];
   checkoutItems: GiftCheckoutItem[];
   hasContributionPix: boolean;
+  pendingDeliveryMethod: DeliveryMethod | null;
 }
 
 interface GuestFlowContextValue extends GuestFlowState {
@@ -36,6 +38,7 @@ interface GuestFlowContextValue extends GuestFlowState {
   clearSelectedGifts: () => void;
   setCheckoutItems: (items: GiftCheckoutItem[]) => void;
   setHasContributionPix: (value: boolean) => void;
+  setPendingDeliveryMethod: (method: DeliveryMethod | null) => void;
   reset: () => void;
 }
 
@@ -60,6 +63,7 @@ const initialState: GuestFlowState = {
   selectedGifts: [],
   checkoutItems: [],
   hasContributionPix: false,
+  pendingDeliveryMethod: null,
 };
 
 const GuestFlowContext = createContext<GuestFlowContextValue | null>(null);
@@ -88,6 +92,8 @@ export function GuestFlowProvider({ children }: { children: ReactNode }) {
     setCheckoutItems: (checkoutItems) => setState((s) => ({ ...s, checkoutItems })),
     setHasContributionPix: (hasContributionPix) =>
       setState((s) => ({ ...s, hasContributionPix })),
+    setPendingDeliveryMethod: (pendingDeliveryMethod) =>
+      setState((s) => ({ ...s, pendingDeliveryMethod })),
     reset: () => setState(initialState),
   };
 

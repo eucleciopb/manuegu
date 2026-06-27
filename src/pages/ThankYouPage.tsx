@@ -1,15 +1,114 @@
+import { useEffect, useState } from 'react';
 import { PageLayout } from '../components/layout/PageLayout';
 import { Button } from '../components/ui/Button';
 import { PurchaseLink } from '../components/gifts/PurchaseLink';
 import { PixKeyDisplay } from '../components/pix/PixKeyDisplay';
 import { useGuestFlow } from '../context/GuestFlowContext';
+import { completeGuestFlow } from '../services/flowCompletionService';
 
 export function ThankYouPage() {
-  const { formData, rsvpData, checkoutItems, hasContributionPix, reset } = useGuestFlow();
+  const {
+    formData,
+    rsvpData,
+    guest,
+    selectedGifts,
+    checkoutItems,
+    hasContributionPix,
+    pendingDeliveryMethod,
+    setGuest,
+    setCheckoutItems,
+    reset,
+  } = useGuestFlow();
+
+  const [submitting, setSubmitting] = useState(!guest);
+  const [submitError, setSubmitError] = useState('');
+  const [retryCount, setRetryCount] = useState(0);
+
+  useEffect(() => {
+    if (guest) {
+      setSubmitting(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    async function saveConfirmation() {
+      setSubmitting(true);
+      setSubmitError('');
+
+      try {
+        const result = await completeGuestFlow({
+          form: formData,
+          rsvp: rsvpData,
+          gifts: selectedGifts,
+          deliveryMethod: pendingDeliveryMethod,
+          withContributionPix: hasContributionPix,
+        });
+
+        if (cancelled) return;
+
+        setGuest(result.guest);
+        if (result.checkoutItems.length > 0) {
+          setCheckoutItems(result.checkoutItems);
+        }
+      } catch (err) {
+        if (cancelled) return;
+        setSubmitError(
+          err instanceof Error ? err.message : 'Erro ao salvar sua confirmação. Tente novamente.'
+        );
+      } finally {
+        if (!cancelled) setSubmitting(false);
+      }
+    }
+
+    saveConfirmation();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    guest,
+    retryCount,
+    formData,
+    rsvpData,
+    selectedGifts,
+    pendingDeliveryMethod,
+    hasContributionPix,
+    setGuest,
+    setCheckoutItems,
+  ]);
 
   const bringItems = checkoutItems.filter((item) => item.reservation.delivery_method === 'bring');
   const pixItems = checkoutItems.filter((item) => item.reservation.delivery_method === 'pix');
   const hasPix = pixItems.length > 0 || hasContributionPix;
+
+  if (submitting) {
+    return (
+      <PageLayout>
+        <div className="thankyou-content">
+          <p className="loading-text">Salvando sua confirmação...</p>
+        </div>
+      </PageLayout>
+    );
+  }
+
+  if (submitError) {
+    return (
+      <PageLayout>
+        <div className="thankyou-content">
+          <p className="form-error-global">{submitError}</p>
+          <div className="flow-actions flow-actions-center">
+            <Button onClick={() => setRetryCount((count) => count + 1)}>
+              Tentar novamente
+            </Button>
+            <Button variant="outline" onClick={reset}>
+              Voltar ao início
+            </Button>
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
 
   return (
     <PageLayout>

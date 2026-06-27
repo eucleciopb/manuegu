@@ -3,43 +3,23 @@ import { PageLayout } from '../components/layout/PageLayout';
 import { Button } from '../components/ui/Button';
 import { StepIndicator } from '../components/ui/StepIndicator';
 import { useGuestFlow } from '../context/GuestFlowContext';
-import { reserveGift } from '../services/giftService';
 import type { DeliveryMethod } from '../types';
 
 export function GiftDeliveryPage() {
-  const { guest, selectedGifts, setCheckoutItems, setStep } = useGuestFlow();
+  const { selectedGifts, setPendingDeliveryMethod, setStep } = useGuestFlow();
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod | null>(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  async function handleConfirm() {
-    if (!guest || selectedGifts.length === 0) return;
+  function handleConfirm() {
+    if (selectedGifts.length === 0) return;
 
     if (!deliveryMethod) {
       setError('Escolha como deseja presentear.');
       return;
     }
 
-    setLoading(true);
-    setError('');
-
-    try {
-      const checkoutItems = [];
-      for (const gift of selectedGifts) {
-        const result = await reserveGift(guest.id, gift.id, deliveryMethod);
-        checkoutItems.push({
-          gift,
-          reservation: result.reservation,
-          pixPayment: result.pixPayment,
-        });
-      }
-      setCheckoutItems(checkoutItems);
-      setStep('thankyou');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao reservar presentes');
-    } finally {
-      setLoading(false);
-    }
+    setPendingDeliveryMethod(deliveryMethod);
+    setStep('thankyou');
   }
 
   if (selectedGifts.length === 0) return null;
@@ -95,7 +75,7 @@ export function GiftDeliveryPage() {
           <Button variant="outline" onClick={() => setStep('gifts')}>
             Voltar
           </Button>
-          <Button loading={loading} disabled={!deliveryMethod} onClick={handleConfirm}>
+          <Button disabled={!deliveryMethod} onClick={handleConfirm}>
             Confirmar {selectedGifts.length} presente(s)
           </Button>
         </div>
