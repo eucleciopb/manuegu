@@ -5,11 +5,11 @@ import { PixKeyDisplay } from '../components/pix/PixKeyDisplay';
 import { useGuestFlow } from '../context/GuestFlowContext';
 
 export function ThankYouPage() {
-  const { formData, rsvpData, checkoutItems, contributionAmount, reset } = useGuestFlow();
+  const { formData, rsvpData, checkoutItems, hasContributionPix, reset } = useGuestFlow();
 
   const bringItems = checkoutItems.filter((item) => item.reservation.delivery_method === 'bring');
   const pixItems = checkoutItems.filter((item) => item.reservation.delivery_method === 'pix');
-  const hasPix = pixItems.length > 0 || Boolean(contributionAmount);
+  const hasPix = pixItems.length > 0 || hasContributionPix;
 
   return (
     <PageLayout>
@@ -84,13 +84,13 @@ export function ThankYouPage() {
               Sentiremos sua falta, mas entendemos. Obrigado por nos avisar com carinho —
               estaremos pensando em você nesse dia especial!
             </p>
-            {contributionAmount && (
+            {hasContributionPix && (
               <div className="thankyou-summary">
                 <h3>Sua contribuição via PIX</h3>
                 <p className="thankyou-section-desc">
                   Muito obrigado por ajudar Manu & Gustavo nessa nova fase. Use a chave abaixo:
                 </p>
-                <PixKeyDisplay hint="Copie a chave e envie o valor que desejar pelo app do seu banco." />
+                <PixKeyDisplay hint="Copie a chave e envie pelo app do seu banco quando preferir." />
               </div>
             )}
           </>

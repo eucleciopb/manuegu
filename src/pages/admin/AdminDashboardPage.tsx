@@ -173,9 +173,7 @@ export function AdminDashboardPage() {
   ];
 
   const pixRows = confirmations.filter((c) => c.pixPayment);
-  const contributionRows = confirmations.filter(
-    (c) => c.guest.pix_contribution_amount && c.guest.pix_contribution_status
-  );
+  const contributionRows = confirmations.filter((c) => c.guest.pix_contribution_status);
 
   function getGiftReservationInfo(giftId: string) {
     return confirmations.find((c) => c.gift?.id === giftId);
@@ -396,7 +394,7 @@ export function AdminDashboardPage() {
                   <td>{c.guest.first_name} {c.guest.last_name}</td>
                   <td>Contribuição</td>
                   <td>Não comparecerá</td>
-                  <td>{formatCurrency(c.guest.pix_contribution_amount!)}</td>
+                  <td>{c.guest.pix_contribution_amount ? formatCurrency(c.guest.pix_contribution_amount) : '—'}</td>
                   <td>
                     <span className={`badge badge-${c.guest.pix_contribution_status}`}>
                       {pixStatusLabel(c.guest.pix_contribution_status)}

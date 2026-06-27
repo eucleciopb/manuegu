@@ -47,6 +47,32 @@ export async function createGuest(
   return guest;
 }
 
+export async function savePixContributionIntent(guestId: string): Promise<Guest> {
+  const updateData = {
+    pix_contribution_amount: null,
+    pix_contribution_status: 'pending' as const,
+  };
+
+  if (isSupabaseConfigured && supabase) {
+    const { data, error } = await supabase
+      .from('guests')
+      .update(updateData)
+      .eq('id', guestId)
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return mapGuest(data as Guest);
+  }
+
+  const guest = MOCK_GUESTS.find((g) => g.id === guestId);
+  if (!guest) throw new Error('Convidado não encontrado.');
+
+  guest.pix_contribution_amount = null;
+  guest.pix_contribution_status = 'pending';
+  return guest;
+}
+
 export async function savePixContribution(
   guestId: string,
   amount: number

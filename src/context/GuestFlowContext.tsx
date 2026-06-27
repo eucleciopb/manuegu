@@ -23,7 +23,7 @@ interface GuestFlowState {
   guest: Guest | null;
   selectedGifts: Gift[];
   checkoutItems: GiftCheckoutItem[];
-  contributionAmount: number | null;
+  hasContributionPix: boolean;
 }
 
 interface GuestFlowContextValue extends GuestFlowState {
@@ -35,7 +35,7 @@ interface GuestFlowContextValue extends GuestFlowState {
   isGiftSelected: (giftId: string) => boolean;
   clearSelectedGifts: () => void;
   setCheckoutItems: (items: GiftCheckoutItem[]) => void;
-  setContributionAmount: (amount: number | null) => void;
+  setHasContributionPix: (value: boolean) => void;
   reset: () => void;
 }
 
@@ -59,7 +59,7 @@ const initialState: GuestFlowState = {
   guest: null,
   selectedGifts: [],
   checkoutItems: [],
-  contributionAmount: null,
+  hasContributionPix: false,
 };
 
 const GuestFlowContext = createContext<GuestFlowContextValue | null>(null);
@@ -86,8 +86,8 @@ export function GuestFlowProvider({ children }: { children: ReactNode }) {
     isGiftSelected: (giftId) => state.selectedGifts.some((g) => g.id === giftId),
     clearSelectedGifts: () => setState((s) => ({ ...s, selectedGifts: [] })),
     setCheckoutItems: (checkoutItems) => setState((s) => ({ ...s, checkoutItems })),
-    setContributionAmount: (contributionAmount) =>
-      setState((s) => ({ ...s, contributionAmount })),
+    setHasContributionPix: (hasContributionPix) =>
+      setState((s) => ({ ...s, hasContributionPix })),
     reset: () => setState(initialState),
   };
 
