@@ -1,11 +1,15 @@
 import { PageLayout } from '../components/layout/PageLayout';
 import { Button } from '../components/ui/Button';
 import { PurchaseLink } from '../components/gifts/PurchaseLink';
+import { PixKeyDisplay } from '../components/pix/PixKeyDisplay';
 import { useGuestFlow } from '../context/GuestFlowContext';
-import { formatCurrency, deliveryMethodLabel } from '../lib/utils';
 
 export function ThankYouPage() {
   const { formData, rsvpData, checkoutItems, contributionAmount, reset } = useGuestFlow();
+
+  const bringItems = checkoutItems.filter((item) => item.reservation.delivery_method === 'bring');
+  const pixItems = checkoutItems.filter((item) => item.reservation.delivery_method === 'pix');
+  const hasPix = pixItems.length > 0 || Boolean(contributionAmount);
 
   return (
     <PageLayout>
@@ -16,68 +20,77 @@ export function ThankYouPage() {
         {rsvpData.willAttend ? (
           <>
             <p className="thankyou-text">
-              Sua presença foi registrada com sucesso! Estamos muito felizes em saber que
-              você estará conosco
-              {rsvpData.guestCount > 1 ? ` com mais ${rsvpData.guestCount - 1} pessoa(s)` : ''}.
+              Sua presença foi registrada com muito carinho! Estamos ansiosos para celebrar
+              esse momento especial com você
+              {rsvpData.guestCount > 1 ? ` e mais ${rsvpData.guestCount - 1} pessoa(s)` : ''}.
             </p>
 
-            {checkoutItems.length > 0 && (
+            {checkoutItems.length === 0 && (
+              <p className="thankyou-text thankyou-text-highlight">
+                Sua presença já é o maior presente para nós!
+              </p>
+            )}
+
+            {bringItems.length > 0 && (
               <div className="thankyou-summary">
                 <h3>
-                  {checkoutItems.length === 1 ? 'Resumo do presente' : `Resumo dos ${checkoutItems.length} presentes`}
+                  {bringItems.length === 1
+                    ? 'Sugestão para comprar'
+                    : 'Sugestões para comprar'}
                 </h3>
-                {checkoutItems.map((item) => (
+                <p className="thankyou-section-desc">
+                  Você escolheu levar no dia. Aqui estão os links dos presentes selecionados:
+                </p>
+                {bringItems.map((item) => (
                   <div key={item.gift.id} className="thankyou-gift-block">
-                    <div className="thankyou-summary-row">
-                      <span>Presente</span>
-                      <strong>{item.gift.name}</strong>
-                    </div>
-                    <div className="thankyou-summary-row">
-                      <span>Valor</span>
-                      <strong>{formatCurrency(item.gift.price)}</strong>
-                    </div>
-                    <div className="thankyou-summary-row">
-                      <span>Entrega</span>
-                      <strong>{deliveryMethodLabel(item.reservation.delivery_method)}</strong>
-                    </div>
-                    {item.reservation.delivery_method === 'bring' && item.gift.purchase_url && (
-                      <div className="thankyou-purchase-link">
-                        <PurchaseLink
-                          url={item.gift.purchase_url}
-                          label="Comprar online"
-                          variant="button"
-                          fullWidth
-                        />
-                      </div>
+                    <p className="thankyou-gift-name">{item.gift.name}</p>
+                    {item.gift.purchase_url ? (
+                      <PurchaseLink
+                        url={item.gift.purchase_url}
+                        label="Ver sugestão de compra"
+                        variant="button"
+                        fullWidth
+                      />
+                    ) : (
+                      <p className="thankyou-text">Leve o presente no dia do chá.</p>
                     )}
                   </div>
                 ))}
               </div>
             )}
 
-            {checkoutItems.length === 0 && (
-              <p className="thankyou-text">
-                Sua presença já é o maior presente para nós!
-              </p>
+            {hasPix && (
+              <div className="thankyou-summary">
+                <h3>Envio via PIX</h3>
+                <p className="thankyou-section-desc">
+                  {pixItems.length > 0 && (
+                    <>
+                      Presente(s):{' '}
+                      <strong>{pixItems.map((item) => item.gift.name).join(', ')}</strong>
+                      <br />
+                    </>
+                  )}
+                  Use a chave abaixo no app do seu banco quando for conveniente:
+                </p>
+                <PixKeyDisplay
+                  hint="Copie a chave e faça o PIX pelo app do seu banco. Obrigado por presentear com tanto carinho!"
+                />
+              </div>
             )}
           </>
         ) : (
           <>
             <p className="thankyou-text">
-              Sentiremos sua falta, mas entendemos. Obrigado por nos avisar com carinho.
-              Estaremos pensando em você nesse dia especial!
+              Sentiremos sua falta, mas entendemos. Obrigado por nos avisar com carinho —
+              estaremos pensando em você nesse dia especial!
             </p>
             {contributionAmount && (
               <div className="thankyou-summary">
-                <h3>Sua contribuição</h3>
-                <div className="thankyou-summary-row">
-                  <span>Valor via PIX</span>
-                  <strong>{formatCurrency(contributionAmount)}</strong>
-                </div>
-                <div className="thankyou-summary-row">
-                  <span>Status</span>
-                  <strong>Aguardando confirmação</strong>
-                </div>
+                <h3>Sua contribuição via PIX</h3>
+                <p className="thankyou-section-desc">
+                  Muito obrigado por ajudar Manu & Gustavo nessa nova fase. Use a chave abaixo:
+                </p>
+                <PixKeyDisplay hint="Copie a chave e envie o valor que desejar pelo app do seu banco." />
               </div>
             )}
           </>

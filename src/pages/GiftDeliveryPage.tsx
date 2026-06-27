@@ -1,12 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { PageLayout } from '../components/layout/PageLayout';
 import { Button } from '../components/ui/Button';
 import { StepIndicator } from '../components/ui/StepIndicator';
-import { PurchaseLink } from '../components/gifts/PurchaseLink';
-import { PixPaymentBox } from '../components/pix/PixPaymentBox';
 import { useGuestFlow } from '../context/GuestFlowContext';
 import { reserveGift } from '../services/giftService';
-import { formatCurrency, deliveryMethodLabel } from '../lib/utils';
+import { deliveryMethodLabel } from '../lib/utils';
 import type { DeliveryMethod, Gift } from '../types';
 
 interface GiftDeliveryState {
@@ -16,17 +14,9 @@ interface GiftDeliveryState {
 export function GiftDeliveryPage() {
   const { guest, selectedGifts, setCheckoutItems, setStep } = useGuestFlow();
   const [deliveryByGift, setDeliveryByGift] = useState<Record<string, GiftDeliveryState>>({});
-  const [pixConfirmed, setPixConfirmed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const pixGifts = useMemo(
-    () =>
-      selectedGifts.filter((g) => deliveryByGift[g.id]?.method === 'pix'),
-    [selectedGifts, deliveryByGift]
-  );
-
-  const pixTotal = pixGifts.reduce((sum, g) => sum + g.price, 0);
   const allHaveMethod = selectedGifts.every((g) => deliveryByGift[g.id]?.method);
 
   function setMethod(giftId: string, method: DeliveryMethod) {
@@ -34,7 +24,6 @@ export function GiftDeliveryPage() {
       ...prev,
       [giftId]: { method },
     }));
-    if (method === 'bring') setPixConfirmed(false);
   }
 
   async function handleConfirm() {
@@ -42,11 +31,6 @@ export function GiftDeliveryPage() {
 
     if (!allHaveMethod) {
       setError('Escolha a forma de entrega para cada presente.');
-      return;
-    }
-
-    if (pixGifts.length > 0 && !pixConfirmed) {
-      setError('Por favor, confirme que já realizou o PIX.');
       return;
     }
 
@@ -81,7 +65,7 @@ export function GiftDeliveryPage() {
         <StepIndicator current={4} total={4} />
         <h2 className="flow-title">Como deseja presentear?</h2>
         <p className="flow-subtitle">
-          Escolha a forma de entrega para cada um dos {selectedGifts.length} presente(s).
+          Para cada presente, escolha se vai levar no dia ou enviar via PIX.
         </p>
 
         <div className="delivery-gifts-list">
@@ -94,26 +78,6 @@ export function GiftDeliveryPage() {
             />
           ))}
         </div>
-
-        {pixGifts.length > 0 && (
-          <div className="pix-combined-section">
-            <h3 className="pix-combined-title">
-              PIX — {pixGifts.length} presente(s) · {formatCurrency(pixTotal)}
-            </h3>
-            <ul className="pix-combined-list">
-              {pixGifts.map((g) => (
-                <li key={g.id}>
-                  {g.name} — {formatCurrency(g.price)}
-                </li>
-              ))}
-            </ul>
-            <PixPaymentBox
-              amount={pixTotal}
-              pixConfirmed={pixConfirmed}
-              onPixConfirmedChange={setPixConfirmed}
-            />
-          </div>
-        )}
 
         {error && <p className="form-error-global">{error}</p>}
 
@@ -145,22 +109,11 @@ function GiftDeliveryCard({
         <img src={gift.image_url} alt={gift.name} className="delivery-gift-thumb" />
         <div>
           <h3 className="delivery-gift-name">{gift.name}</h3>
-          <p className="delivery-gift-price">{formatCurrency(gift.price)}</p>
           {method && (
             <span className="delivery-gift-method">{deliveryMethodLabel(method)}</span>
           )}
         </div>
       </div>
-
-      {method === 'bring' && gift.purchase_url && (
-        <div className="purchase-hint purchase-hint-compact">
-          <PurchaseLink
-            url={gift.purchase_url}
-            label="Comprar online"
-            variant="button"
-          />
-        </div>
-      )}
 
       <div className="delivery-gift-options">
         <button
@@ -175,7 +128,7 @@ function GiftDeliveryCard({
           className={`delivery-option-btn ${method === 'pix' ? 'delivery-option-btn-active' : ''}`}
           onClick={() => onSetMethod('pix')}
         >
-          💳 PIX {formatCurrency(gift.price)}
+          💳 Enviar via PIX
         </button>
       </div>
     </div>

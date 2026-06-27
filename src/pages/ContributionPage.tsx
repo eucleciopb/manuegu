@@ -3,7 +3,6 @@ import { PageLayout } from '../components/layout/PageLayout';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { StepIndicator, OptionCard } from '../components/ui/StepIndicator';
-import { PixPaymentBox } from '../components/pix/PixPaymentBox';
 import { useGuestFlow } from '../context/GuestFlowContext';
 import { savePixContribution } from '../services/guestService';
 import { formatCurrency } from '../lib/utils';
@@ -15,7 +14,6 @@ export function ContributionPage() {
   const [wantsToContribute, setWantsToContribute] = useState<boolean | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState('');
-  const [pixConfirmed, setPixConfirmed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -28,10 +26,6 @@ export function ContributionPage() {
   async function handleConfirmContribution() {
     if (!guest || !selectedAmount || selectedAmount <= 0) {
       setError('Selecione ou informe um valor válido.');
-      return;
-    }
-    if (!pixConfirmed) {
-      setError('Por favor, confirme que já realizou o PIX.');
       return;
     }
 
@@ -63,7 +57,7 @@ export function ContributionPage() {
           <div className="option-list">
             <OptionCard
               title="Sim, quero contribuir"
-              description="Fazer um PIX com o valor que desejar"
+              description="Enviar um PIX com o valor que desejar"
               icon="💝"
               selected={false}
               onClick={() => setWantsToContribute(true)}
@@ -111,13 +105,9 @@ export function ContributionPage() {
               hint="Opcional — use se quiser um valor diferente"
             />
 
-            {selectedAmount && selectedAmount > 0 && (
-              <PixPaymentBox
-                amount={selectedAmount}
-                pixConfirmed={pixConfirmed}
-                onPixConfirmedChange={setPixConfirmed}
-              />
-            )}
+            <p className="contribution-pix-note">
+              Ao confirmar, você verá a chave PIX na tela de agradecimento.
+            </p>
 
             {error && <p className="form-error-global">{error}</p>}
 
@@ -125,7 +115,11 @@ export function ContributionPage() {
               <Button variant="outline" onClick={() => setWantsToContribute(null)}>
                 Voltar
               </Button>
-              <Button loading={loading} onClick={handleConfirmContribution}>
+              <Button
+                loading={loading}
+                disabled={!selectedAmount || selectedAmount <= 0}
+                onClick={handleConfirmContribution}
+              >
                 Confirmar contribuição
               </Button>
             </div>

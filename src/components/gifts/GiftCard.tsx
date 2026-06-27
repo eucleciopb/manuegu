@@ -1,7 +1,6 @@
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { PurchaseLink } from './PurchaseLink';
-import { formatCurrency } from '../../lib/utils';
 import type { Gift } from '../../types';
 
 interface GiftCardProps {
@@ -21,9 +20,8 @@ export function GiftCard({ gift, selected, onToggle }: GiftCardProps) {
       </div>
       <div className="gift-card-body">
         <h3 className="gift-card-name">{gift.name}</h3>
-        <p className="gift-card-price">{formatCurrency(gift.price)}</p>
         {gift.purchase_url && (
-          <PurchaseLink url={gift.purchase_url} label="Ver na loja" />
+          <PurchaseLink url={gift.purchase_url} label="Ver sugestão" />
         )}
         <Button
           fullWidth

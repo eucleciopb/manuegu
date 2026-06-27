@@ -2,7 +2,6 @@ import { useEffect, useState, FormEvent } from 'react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import type { Gift, GiftFormData } from '../../types';
-import { formatCurrency } from '../../lib/utils';
 
 interface GiftFormModalProps {
   gift?: Gift | null;
@@ -13,7 +12,7 @@ interface GiftFormModalProps {
 const emptyForm: GiftFormData = {
   name: '',
   image_url: '',
-  price: '',
+  price: '0',
   purchase_url: '',
 };
 
@@ -79,32 +78,24 @@ export function GiftFormModal({ gift, onClose, onSave }: GiftFormModalProps) {
             hint="Link de uma foto do presente"
           />
           <Input
-            label="Valor (R$)"
-            required
-            type="number"
-            min={0.01}
-            step={0.01}
-            value={form.price}
-            onChange={(e) => setForm({ ...form, price: e.target.value })}
-            placeholder="99.90"
-          />
-          <Input
             label="Link para compra"
+            required
             type="url"
             value={form.purchase_url}
             onChange={(e) => setForm({ ...form, purchase_url: e.target.value })}
             placeholder="https://www.mercadolivre.com.br/..."
-            hint="Opcional — Mercado Livre, Amazon, etc."
+            hint="Mercado Livre, Amazon, Shopee, etc."
           />
 
           {form.image_url && (
             <div className="gift-form-preview">
-              <img src={form.image_url} alt="Prévia" onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }} />
-              {form.price && !isNaN(parseFloat(form.price)) && (
-                <span>{formatCurrency(parseFloat(form.price.replace(',', '.')))}</span>
-              )}
+              <img
+                src={form.image_url}
+                alt="Prévia"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
             </div>
           )}
 

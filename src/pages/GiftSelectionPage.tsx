@@ -5,7 +5,6 @@ import { StepIndicator } from '../components/ui/StepIndicator';
 import { GiftCard } from '../components/gifts/GiftCard';
 import { useGuestFlow } from '../context/GuestFlowContext';
 import { getAvailableGifts } from '../services/giftService';
-import { formatCurrency } from '../lib/utils';
 import type { Gift } from '../types';
 
 export function GiftSelectionPage() {
@@ -13,8 +12,6 @@ export function GiftSelectionPage() {
   const [gifts, setGifts] = useState<Gift[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
-  const totalSelected = selectedGifts.reduce((sum, g) => sum + g.price, 0);
 
   useEffect(() => {
     getAvailableGifts()
@@ -65,7 +62,6 @@ export function GiftSelectionPage() {
           <div className="gift-cart-bar">
             <div className="gift-cart-info">
               <strong>{selectedGifts.length} presente(s) selecionado(s)</strong>
-              <span>Total: {formatCurrency(totalSelected)}</span>
             </div>
             <Button onClick={handleContinue}>Continuar</Button>
           </div>

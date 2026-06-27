@@ -1013,6 +1013,28 @@ body {
   accent-color: var(--color-primary);
 }
 
+.pix-key-display {
+  margin-top: 0.5rem;
+  padding: 1.25rem;
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.pix-key-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  margin-bottom: 1rem;
+}
+
+.pix-key-hint {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 1rem 0;
+  line-height: 1.5;
+}
+
 /* ─── Contribution ─── */
 
 .contribution-section {
@@ -1056,6 +1078,13 @@ body {
   color: var(--color-text);
 }
 
+.contribution-pix-note {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
 /* ─── Thank You ─── */
 
 .thankyou-content {
@@ -1079,6 +1108,26 @@ body {
   font-size: 1.05rem;
   margin-bottom: 1.5rem;
   line-height: 1.7;
+}
+
+.thankyou-text-highlight {
+  font-family: var(--font-display);
+  color: var(--color-primary-dark);
+  font-size: 1.15rem;
+}
+
+.thankyou-section-desc {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.thankyou-gift-name {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  text-align: center;
 }
 
 .thankyou-summary {

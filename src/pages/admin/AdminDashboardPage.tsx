@@ -283,7 +283,7 @@ export function AdminDashboardPage() {
               {giftError && <p className="form-error-global">{giftError}</p>}
 
               <AdminTable
-                headers={['Foto', 'Presente', 'Valor', 'Status', 'Reservado por', 'Entrega', 'Ações']}
+                headers={['Foto', 'Presente', 'Link', 'Status', 'Reservado por', 'Entrega', 'Ações']}
               >
                 {allGifts.map((gift) => {
                   const info = getGiftReservationInfo(gift.id);
@@ -292,20 +292,21 @@ export function AdminDashboardPage() {
                       <td>
                         <img src={gift.image_url} alt={gift.name} className="admin-gift-thumb" />
                       </td>
+                      <td>{gift.name}</td>
                       <td>
-                        {gift.name}
-                        {gift.purchase_url && (
+                        {gift.purchase_url ? (
                           <a
                             href={gift.purchase_url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="admin-gift-link"
                           >
-                            Link ↗
+                            Abrir link ↗
                           </a>
+                        ) : (
+                          '—'
                         )}
                       </td>
-                      <td>{formatCurrency(gift.price)}</td>
                       <td>
                         <span className={`badge badge-${gift.status}`}>
                           {gift.status === 'reserved' ? 'Reservado' : 'Disponível'}

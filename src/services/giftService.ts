@@ -176,8 +176,11 @@ export async function createGift(form: GiftFormData): Promise<Gift> {
     status: 'available' as const,
   };
 
-  if (!giftData.name || !giftData.image_url || isNaN(giftData.price) || giftData.price <= 0) {
-    throw new Error('Preencha nome, imagem e um valor válido.');
+  if (!giftData.name || !giftData.image_url || !giftData.purchase_url) {
+    throw new Error('Preencha nome, imagem e link para compra.');
+  }
+  if (isNaN(giftData.price) || giftData.price < 0) {
+    throw new Error('Valor do presente inválido.');
   }
 
   if (isSupabaseConfigured && supabase) {
@@ -203,8 +206,11 @@ export async function updateGift(giftId: string, form: GiftFormData): Promise<Gi
     purchase_url: form.purchase_url.trim() || null,
   };
 
-  if (!giftData.name || !giftData.image_url || isNaN(giftData.price) || giftData.price <= 0) {
-    throw new Error('Preencha nome, imagem e um valor válido.');
+  if (!giftData.name || !giftData.image_url || !giftData.purchase_url) {
+    throw new Error('Preencha nome, imagem e link para compra.');
+  }
+  if (isNaN(giftData.price) || giftData.price < 0) {
+    throw new Error('Valor do presente inválido.');
   }
 
   if (isSupabaseConfigured && supabase) {
