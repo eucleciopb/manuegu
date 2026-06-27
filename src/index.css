@@ -673,6 +673,42 @@ body {
   margin-bottom: 1.5rem;
 }
 
+.delivery-gifts-summary {
+  background: var(--color-bg-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.delivery-gifts-summary-label {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.delivery-gifts-summary-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.delivery-gifts-summary-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.delivery-method-choice {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
 .delivery-gift-card {
   background: var(--color-bg-card);
   border: 1.5px solid var(--color-border);
@@ -1627,7 +1663,8 @@ body {
     grid-template-columns: 1fr 1fr;
   }
 
-  .delivery-gift-options {
+  .delivery-gift-options,
+  .delivery-method-choice {
     grid-template-columns: 1fr;
   }
 

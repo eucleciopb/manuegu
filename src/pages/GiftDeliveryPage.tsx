@@ -4,33 +4,19 @@ import { Button } from '../components/ui/Button';
 import { StepIndicator } from '../components/ui/StepIndicator';
 import { useGuestFlow } from '../context/GuestFlowContext';
 import { reserveGift } from '../services/giftService';
-import { deliveryMethodLabel } from '../lib/utils';
-import type { DeliveryMethod, Gift } from '../types';
-
-interface GiftDeliveryState {
-  method: DeliveryMethod | null;
-}
+import type { DeliveryMethod } from '../types';
 
 export function GiftDeliveryPage() {
   const { guest, selectedGifts, setCheckoutItems, setStep } = useGuestFlow();
-  const [deliveryByGift, setDeliveryByGift] = useState<Record<string, GiftDeliveryState>>({});
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  const allHaveMethod = selectedGifts.every((g) => deliveryByGift[g.id]?.method);
-
-  function setMethod(giftId: string, method: DeliveryMethod) {
-    setDeliveryByGift((prev) => ({
-      ...prev,
-      [giftId]: { method },
-    }));
-  }
 
   async function handleConfirm() {
     if (!guest || selectedGifts.length === 0) return;
 
-    if (!allHaveMethod) {
-      setError('Escolha a forma de entrega para cada presente.');
+    if (!deliveryMethod) {
+      setError('Escolha como deseja presentear.');
       return;
     }
 
@@ -40,8 +26,7 @@ export function GiftDeliveryPage() {
     try {
       const checkoutItems = [];
       for (const gift of selectedGifts) {
-        const method = deliveryByGift[gift.id]!.method!;
-        const result = await reserveGift(guest.id, gift.id, method);
+        const result = await reserveGift(guest.id, gift.id, deliveryMethod);
         checkoutItems.push({
           gift,
           reservation: result.reservation,
@@ -65,18 +50,43 @@ export function GiftDeliveryPage() {
         <StepIndicator current={4} total={4} />
         <h2 className="flow-title">Como deseja presentear?</h2>
         <p className="flow-subtitle">
-          Para cada presente, escolha se vai levar no dia ou enviar via PIX.
+          Escolha uma opção para {selectedGifts.length === 1 ? 'o presente' : 'todos os presentes'}{' '}
+          selecionado{selectedGifts.length === 1 ? '' : 's'}.
         </p>
 
-        <div className="delivery-gifts-list">
-          {selectedGifts.map((gift) => (
-            <GiftDeliveryCard
-              key={gift.id}
-              gift={gift}
-              method={deliveryByGift[gift.id]?.method ?? null}
-              onSetMethod={(method) => setMethod(gift.id, method)}
-            />
-          ))}
+        <div className="delivery-gifts-summary">
+          <p className="delivery-gifts-summary-label">Seus presentes:</p>
+          <ul className="delivery-gifts-summary-list">
+            {selectedGifts.map((gift) => (
+              <li key={gift.id} className="delivery-gifts-summary-item">
+                <img src={gift.image_url} alt={gift.name} className="delivery-gift-thumb" />
+                <span>{gift.name}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="delivery-method-choice">
+          <button
+            type="button"
+            className={`delivery-option-btn ${deliveryMethod === 'bring' ? 'delivery-option-btn-active' : ''}`}
+            onClick={() => {
+              setDeliveryMethod('bring');
+              setError('');
+            }}
+          >
+            🎁 Levar no dia
+          </button>
+          <button
+            type="button"
+            className={`delivery-option-btn ${deliveryMethod === 'pix' ? 'delivery-option-btn-active' : ''}`}
+            onClick={() => {
+              setDeliveryMethod('pix');
+              setError('');
+            }}
+          >
+            💳 Enviar via PIX
+          </button>
         </div>
 
         {error && <p className="form-error-global">{error}</p>}
@@ -85,52 +95,11 @@ export function GiftDeliveryPage() {
           <Button variant="outline" onClick={() => setStep('gifts')}>
             Voltar
           </Button>
-          <Button loading={loading} disabled={!allHaveMethod} onClick={handleConfirm}>
+          <Button loading={loading} disabled={!deliveryMethod} onClick={handleConfirm}>
             Confirmar {selectedGifts.length} presente(s)
           </Button>
         </div>
       </div>
     </PageLayout>
-  );
-}
-
-function GiftDeliveryCard({
-  gift,
-  method,
-  onSetMethod,
-}: {
-  gift: Gift;
-  method: DeliveryMethod | null;
-  onSetMethod: (method: DeliveryMethod) => void;
-}) {
-  return (
-    <div className="delivery-gift-card">
-      <div className="delivery-gift-header">
-        <img src={gift.image_url} alt={gift.name} className="delivery-gift-thumb" />
-        <div>
-          <h3 className="delivery-gift-name">{gift.name}</h3>
-          {method && (
-            <span className="delivery-gift-method">{deliveryMethodLabel(method)}</span>
-          )}
-        </div>
-      </div>
-
-      <div className="delivery-gift-options">
-        <button
-          type="button"
-          className={`delivery-option-btn ${method === 'bring' ? 'delivery-option-btn-active' : ''}`}
-          onClick={() => onSetMethod('bring')}
-        >
-          🎁 Levar no dia
-        </button>
-        <button
-          type="button"
-          className={`delivery-option-btn ${method === 'pix' ? 'delivery-option-btn-active' : ''}`}
-          onClick={() => onSetMethod('pix')}
-        >
-          💳 Enviar via PIX
-        </button>
-      </div>
-    </div>
   );
 }
