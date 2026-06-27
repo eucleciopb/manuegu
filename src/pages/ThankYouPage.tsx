@@ -174,6 +174,26 @@ export function ThankYouPage() {
                 <PixKeyDisplay
                   hint="Copie a chave e faça o PIX pelo app do seu banco. Obrigado por presentear com tanto carinho!"
                 />
+                {pixItems.some((item) => item.gift.purchase_url) && (
+                  <div className="thankyou-curiosity-links">
+                    <p className="thankyou-section-desc">
+                      Quer dar uma olhada nos presentes? Só por curiosidade 😊
+                    </p>
+                    {pixItems.map((item) =>
+                      item.gift.purchase_url ? (
+                        <div key={item.gift.id} className="thankyou-gift-block">
+                          <p className="thankyou-gift-name">{item.gift.name}</p>
+                          <PurchaseLink
+                            url={item.gift.purchase_url}
+                            label="Ver sugestão de compra"
+                            variant="button"
+                            fullWidth
+                          />
+                        </div>
+                      ) : null
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </>
