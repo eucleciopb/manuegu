@@ -1,13 +1,29 @@
-# Chá de Casa Nova — Manu & Gustavo
+# Chá de Casa Nova — Bia & Daniel
 
-Site de confirmação de presença e lista de presentes para o chá de casa nova de Manu & Gustavo.
+Site de confirmação de presença e lista de presentes para o chá de casa nova de **Anna Beatriz** e **Daniel Amorim**.
+
+**Nome do aplicativo:** Bia e Daniel  
+**App ID:** `bia-e-daniel`
+
+Este projeto reutiliza a estrutura do site Manu e Gu, com identidade própria e **banco de dados separado**.
+
+## Isolamento de dados (obrigatório)
+
+Para não misturar informações com o projeto Manu e Gu:
+
+1. Crie um **novo projeto Supabase** (não reutilize o do Manu e Gu)
+2. Execute `supabase/schema.sql` nesse projeto novo
+3. Configure `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` com as credenciais do projeto novo
+4. Na Vercel, crie um **projeto de deploy separado** com essas variáveis
+
+Nunca aponte este app para o mesmo Supabase do Manu e Gu.
 
 ## Funcionalidades
 
 - **Convidados**: confirmação de presença, escolha de presente, opção PIX ou levar no dia
 - **Presentes**: reserva automática — cada presente fica indisponível após ser escolhido
 - **Painel Admin** (`/admin`): dashboard, confirmações, gestão de presentes, controle de PIX, exportação CSV
-- **Supabase**: banco de dados em nuvem (com fallback para dados mockados em desenvolvimento)
+- **Supabase**: banco de dados em nuvem (com fallback mock em desenvolvimento)
 
 ## Tecnologias
 
@@ -15,6 +31,19 @@ Site de confirmação de presença e lista de presentes para o chá de casa nova
 - React Router
 - Supabase (PostgreSQL)
 - Deploy na Vercel
+
+## Foto do casal
+
+1. Salve a fotografia em `public/foto-casal.jpg` (sem alterar rostos ou aparência da imagem)
+2. No `.env`, configure:
+
+```env
+VITE_HERO_PHOTO_URL=/foto-casal.jpg
+```
+
+Até a foto ser adicionada, o site usa o placeholder `public/foto-casal.svg`.
+
+A imagem do hero usa `object-fit: cover` e se adapta a celular e desktop sem distorção.
 
 ## Como rodar localmente
 
@@ -24,136 +53,81 @@ Site de confirmação de presença e lista de presentes para o chá de casa nova
 npm install
 ```
 
-### 2. Configurar o Supabase (obrigatório para salvar dados)
+### 2. Configurar o Supabase (projeto novo)
 
 #### Passo A — Criar projeto
 
-1. Acesse [supabase.com](https://supabase.com) e crie uma conta gratuita
+1. Acesse [supabase.com](https://supabase.com)
 2. Clique em **New Project**
-3. Escolha um nome (ex: `cha-casa-nova`) e uma senha de banco
-4. Aguarde o projeto ficar pronto (~2 min)
+3. Nome sugerido: `bia-e-daniel` ou `cha-casa-nova-bia-daniel`
+4. Aguarde o projeto ficar pronto
 
 #### Passo B — Criar as tabelas
 
-1. No painel do Supabase, vá em **SQL Editor**
-2. Clique em **New query**
-3. Copie todo o conteúdo de `supabase/schema.sql` e cole no editor
-4. Clique em **Run** — deve criar 4 tabelas e 8 presentes iniciais
+1. No Supabase: **SQL Editor** → **New query**
+2. Cole o conteúdo de `supabase/schema.sql`
+3. Clique em **Run**
 
-#### Passo C — Copiar as credenciais
+#### Passo C — Credenciais
 
-1. Vá em **Project Settings** → **API**
-2. Copie:
-   - **Project URL** → `VITE_SUPABASE_URL`
-   - **anon public** key → `VITE_SUPABASE_ANON_KEY`
+Em **Project Settings** → **API**:
 
-#### Passo D — Configurar o `.env`
+- **Project URL** → `VITE_SUPABASE_URL`
+- **anon public** key → `VITE_SUPABASE_ANON_KEY`
+
+#### Passo D — Arquivo `.env`
 
 ```bash
 cp .env.example .env
 ```
 
-Edite o `.env`:
-
 ```env
+VITE_APP_ID=bia-e-daniel
 VITE_SUPABASE_URL=https://xxxxxxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-VITE_ADMIN_PASSWORD=sua-senha-segura
-VITE_PIX_KEY=seu-pix@email.com
-VITE_PIX_NAME=Manu e Gustavo
-```
-
-> **Importante:** reinicie o servidor após alterar o `.env` (`Ctrl+C` e `npm run dev`).
-
-#### Verificar conexão
-
-Acesse `/admin` — se estiver tudo certo, aparecerá:
-**"Supabase conectado — X presente(s) no banco"**
-
-### 3. Configurar variáveis de ambiente (resumo)
-
-Copie o arquivo de exemplo:
-
-```bash
-cp .env.example .env
-```
-
-Preencha as variáveis:
-
-```env
-VITE_SUPABASE_URL=https://seu-projeto.supabase.co
 VITE_SUPABASE_ANON_KEY=sua-chave-anon
-VITE_ADMIN_PASSWORD=sua-senha-admin
-VITE_PIX_KEY=seu-email@exemplo.com
-VITE_PIX_NAME=Manu e Gustavo
+VITE_ADMIN_PASSWORD=sua-senha-segura
+VITE_PIX_KEY=sua-chave-pix
+VITE_PIX_NAME=Bia e Daniel
+VITE_HERO_PHOTO_URL=/foto-casal.jpg
 ```
 
-> **Sem Supabase?** O projeto funciona com dados mockados em memória (perdidos ao recarregar). Para produção, configure o Supabase conforme acima.
+> Reinicie o servidor após alterar o `.env`.
 
-### 4. Iniciar o servidor de desenvolvimento
+### 3. Iniciar
 
 ```bash
 npm run dev
 ```
 
-Acesse [http://localhost:5173](http://localhost:5173)
+- Site: [http://localhost:5173](http://localhost:5173)
+- Admin: [http://localhost:5173/admin](http://localhost:5173/admin)
 
-- Painel admin: [http://localhost:5173/admin](http://localhost:5173/admin)
-- Senha padrão: valor de `VITE_ADMIN_PASSWORD` (padrão: `admin123`)
+## Publicar na Vercel (projeto separado)
 
-### 5. Build de produção
+1. Faça deploy desta branch/repositório em um **novo** projeto Vercel
+2. Configure as variáveis de ambiente do Bia e Daniel (nunca as do Manu e Gu)
+3. Deploy
 
-```bash
-npm run build
-```
-
-## Publicar na Vercel
-
-1. Faça commit e push deste projeto para o GitHub
-2. Acesse [vercel.com](https://vercel.com) e clique em **Add New Project**
-3. Importe o repositório do GitHub
-4. Configure as variáveis de ambiente:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-   - `VITE_ADMIN_PASSWORD`
-   - `VITE_PIX_KEY`
-   - `VITE_PIX_NAME`
-5. Clique em **Deploy**
-
-O arquivo `vercel.json` já está configurado para SPA routing (React Router).
-
-## Estrutura do projeto
+## Estrutura
 
 ```
 src/
-├── components/       # Componentes reutilizáveis (UI, layout, gifts, admin)
-├── context/          # Contexto do fluxo do convidado
-├── lib/              # Supabase, mock data, utilitários
-├── pages/            # Páginas do fluxo e admin
-├── services/         # Camada de dados (guest, gift, admin)
-└── types/            # Tipos TypeScript
+├── components/
+├── context/
+├── lib/              # brand.ts, supabase, utils
+├── pages/
+├── services/
+└── types/
 supabase/
-└── schema.sql        # Script SQL para criar tabelas
+└── schema.sql
+public/
+└── foto-casal.jpg    # adicione a foto do casal aqui
 ```
 
-## Tabelas do banco
+## Identidade centralizada
 
-| Tabela | Descrição |
-|--------|-----------|
-| `guests` | Convidados e confirmações de presença |
-| `gifts` | Lista de presentes |
-| `gift_reservations` | Reservas de presentes |
-| `pix_payments` | Pagamentos PIX pendentes/confirmados |
-
-## Scripts disponíveis
-
-| Comando | Descrição |
-|---------|-----------|
-| `npm install` | Instala dependências |
-| `npm run dev` | Servidor de desenvolvimento |
-| `npm run build` | Build de produção |
-| `npm run preview` | Preview do build |
+Textos de marca ficam em `src/lib/brand.ts` (`Bia & Daniel`, nomes completos, títulos).
 
 ---
 
-Feito com 💕 para Manu & Gustavo
+Feito com 💕 para Anna Beatriz e Daniel Amorim

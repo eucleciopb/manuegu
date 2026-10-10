@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Button } from '../ui/Button';
 import { formatCurrency, formatWhatsApp } from '../../lib/utils';
 import { generatePixPayload, getPixQrCodeUrl } from '../../lib/pixPayload';
+import { brand } from '../../lib/brand';
 
 async function copyToClipboard(text: string): Promise<void> {
   await navigator.clipboard.writeText(text);
@@ -19,7 +20,7 @@ interface PixPaymentBoxProps {
 export function PixPaymentBox({
   amount,
   pixKey = import.meta.env.VITE_PIX_KEY || '',
-  pixName = import.meta.env.VITE_PIX_NAME || 'Manu e Gustavo',
+  pixName = import.meta.env.VITE_PIX_NAME || brand.pixNameDefault,
   pixCity = import.meta.env.VITE_PIX_CITY || 'SAO PAULO',
   pixConfirmed,
   onPixConfirmedChange,

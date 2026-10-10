@@ -1,5 +1,7 @@
--- Chá de Casa Nova — Manu & Gustavo
--- Execute este script no SQL Editor do Supabase (pode rodar mais de uma vez)
+-- Chá de Casa Nova — Bia & Daniel (Anna Beatriz e Daniel Amorim)
+-- App ID: bia-e-daniel
+-- Execute este script em um projeto Supabase NOVO e separado do Manu e Gu.
+-- Nunca rode este script no banco do projeto Manu e Gu.
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 

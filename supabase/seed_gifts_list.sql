@@ -1,4 +1,4 @@
--- Lista completa de presentes — Chá de Casa Nova
+-- Lista completa de presentes — Chá de Casa Nova (Bia & Daniel)
 -- Remove presentes disponíveis sem reserva e insere a lista atualizada
 
 DELETE FROM gifts

@@ -3,6 +3,7 @@ import { PageLayout } from '../components/layout/PageLayout';
 import { Button } from '../components/ui/Button';
 import { StepIndicator, OptionCard } from '../components/ui/StepIndicator';
 import { useGuestFlow } from '../context/GuestFlowContext';
+import { brand } from '../lib/brand';
 
 export function ContributionPage() {
   const { formData, setHasContributionPix, setStep } = useGuestFlow();
@@ -25,7 +26,7 @@ export function ContributionPage() {
         <h2 className="flow-title">Que tal ajudar o casal?</h2>
         <p className="flow-subtitle">
           {formData.firstName}, sentiremos sua falta! Mesmo não podendo ir, você gostaria de
-          enviar um PIX para ajudar Manu & Gustavo?
+          enviar um PIX para ajudar {brand.coupleDisplay}?
         </p>
 
         {wantsToContribute === null && (

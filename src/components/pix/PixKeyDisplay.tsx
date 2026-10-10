@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '../ui/Button';
 import { formatWhatsApp } from '../../lib/utils';
+import { brand } from '../../lib/brand';
 
 interface PixKeyDisplayProps {
   pixKey?: string;
@@ -11,7 +12,7 @@ interface PixKeyDisplayProps {
 
 export function PixKeyDisplay({
   pixKey = import.meta.env.VITE_PIX_KEY || '',
-  pixName = import.meta.env.VITE_PIX_NAME || 'Manu e Gustavo',
+  pixName = import.meta.env.VITE_PIX_NAME || brand.pixNameDefault,
   title = 'Chave PIX',
   hint = 'Use esta chave no app do seu banco para enviar o PIX.',
 }: PixKeyDisplayProps) {
