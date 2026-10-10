@@ -13,6 +13,5 @@ export const brand = {
   footerLine: 'Com carinho, Bia & Daniel',
   pixNameDefault: 'Bia e Daniel',
   heroPhotoAlt: 'Anna Beatriz e Daniel Amorim',
-  /** Coloque a foto do casal em public/foto-casal.jpg e aponte VITE_HERO_PHOTO_URL */
-  heroPhotoDefault: '/foto-casal.svg',
+  heroPhotoDefault: '/foto-casal.jpg',
 } as const;

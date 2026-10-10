@@ -34,16 +34,13 @@ Nunca aponte este app para o mesmo Supabase do Manu e Gu.
 
 ## Foto do casal
 
-1. Salve a fotografia em `public/foto-casal.jpg` (sem alterar rostos ou aparência da imagem)
-2. No `.env`, configure:
+A foto de Anna Beatriz e Daniel Amorim já está em `public/foto-casal.jpg`.
 
 ```env
 VITE_HERO_PHOTO_URL=/foto-casal.jpg
 ```
 
-Até a foto ser adicionada, o site usa o placeholder `public/foto-casal.svg`.
-
-A imagem do hero usa `object-fit: cover` e se adapta a celular e desktop sem distorção.
+A imagem do hero usa `object-fit: cover` (sem distorção) e se adapta a celular e desktop.
 
 ## Como rodar localmente
 
