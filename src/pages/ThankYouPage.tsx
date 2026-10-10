@@ -5,6 +5,7 @@ import { PurchaseLink } from '../components/gifts/PurchaseLink';
 import { PixKeyDisplay } from '../components/pix/PixKeyDisplay';
 import { useGuestFlow } from '../context/GuestFlowContext';
 import { completeGuestFlow } from '../services/flowCompletionService';
+import { brand } from '../lib/brand';
 
 export function ThankYouPage() {
   const {
@@ -207,7 +208,7 @@ export function ThankYouPage() {
               <div className="thankyou-summary">
                 <h3>Sua contribuição via PIX</h3>
                 <p className="thankyou-section-desc">
-                  Muito obrigado por ajudar Manu & Gustavo nessa nova fase. Use a chave abaixo:
+                  Muito obrigado por ajudar {brand.coupleDisplay} nessa nova fase. Use a chave abaixo:
                 </p>
                 <PixKeyDisplay hint="Copie a chave e envie pelo app do seu banco quando preferir." />
               </div>
@@ -217,7 +218,7 @@ export function ThankYouPage() {
 
         <p className="thankyou-final">
           Com muito amor,<br />
-          <strong>Manu & Gustavo</strong>
+          <strong>{brand.coupleDisplay}</strong>
         </p>
 
         <Button variant="outline" onClick={reset}>

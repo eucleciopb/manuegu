@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { BotanicalCorner, BotanicalDivider, BotanicalGarland } from '../decor/BotanicalDecor';
 import { BotanicalBackground } from '../decor/BotanicalBackground';
+import { brand } from '../../lib/brand';
 
 interface PageLayoutProps {
   children: ReactNode;
@@ -18,8 +19,8 @@ export function PageLayout({ children, showHeader = true, centered = true }: Pag
       {showHeader && (
         <header className="page-header">
           <BotanicalGarland className="page-header-garland" />
-          <p className="header-subtitle">Chá de Casa Nova</p>
-          <h1 className="header-title">Manu & Gustavo</h1>
+          <p className="header-subtitle">{brand.eventName}</p>
+          <h1 className="header-title">{brand.coupleDisplay}</h1>
           <BotanicalDivider />
         </header>
       )}
@@ -28,7 +29,7 @@ export function PageLayout({ children, showHeader = true, centered = true }: Pag
 
       <footer className="page-footer">
         <BotanicalDivider className="page-footer-divider" />
-        <p>Com carinho, Manu & Gustavo</p>
+        <p>{brand.footerLine}</p>
       </footer>
     </div>
   );

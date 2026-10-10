@@ -162,7 +162,7 @@ export function AdminDashboardPage() {
         : '',
       'Data confirmação': formatDate(c.guest.created_at),
     }));
-    exportToCsv(rows, `confirmacoes-cha-casa-nova-${new Date().toISOString().slice(0, 10)}.csv`);
+    exportToCsv(rows, `confirmacoes-bia-e-daniel-${new Date().toISOString().slice(0, 10)}.csv`);
   }
 
   const tabs: { id: Tab; label: string }[] = [
@@ -184,7 +184,7 @@ export function AdminDashboardPage() {
       <header className="admin-header">
         <div>
           <h1>Painel Admin</h1>
-          <p>Chá de Casa Nova — Manu & Gustavo</p>
+          <p>Chá de Casa Nova — Bia & Daniel</p>
         </div>
         <div className="admin-header-actions">
           <Button variant="outline" size="sm" onClick={handleExport}>

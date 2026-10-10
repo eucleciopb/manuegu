@@ -25,7 +25,7 @@ export function AdminLoginPage() {
         <div className="admin-login-header">
           <span className="admin-login-icon">🔐</span>
           <h1>Painel Administrativo</h1>
-          <p>Chá de Casa Nova — Manu & Gustavo</p>
+          <p>Chá de Casa Nova — Bia & Daniel</p>
         </div>
         <form onSubmit={handleSubmit} className="admin-login-form">
           <Input
